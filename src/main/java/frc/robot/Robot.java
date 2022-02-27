@@ -51,7 +51,6 @@ public class Robot extends TimedRobot {
     // Set the resolution
     camera.setResolution(320, 240);
     
-
     SendableChooser<String> auto = new SendableChooser<String>();
 
   
@@ -112,6 +111,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    CommandScheduler.getInstance().run();
   }
 
   @Override
@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-
+    CommandScheduler.getInstance().run();
   }
 
   @Override
@@ -144,5 +144,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    CommandScheduler.getInstance().run();
   }
 }
