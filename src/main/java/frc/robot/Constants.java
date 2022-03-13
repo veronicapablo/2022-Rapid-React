@@ -35,7 +35,7 @@ public final class Constants {
 
         //Pneumatic Control Module ports
         //public static final int kShifterSolenoid = 3;
-        public static final int kIntakeSolenoid = 0;
+        public static final int kIntakeSolenoid = 1;
         //public static final int[] kLeftEncoderPorts = new int[]{0, 1};
         //public static final int[] kRightEncoderPorts = new int[]{2, 3};
 
@@ -44,19 +44,23 @@ public final class Constants {
     //#################### DRIVETRAIN CONSTANTS ####################
 
     public static final class DriveConstants {
+
+        //Drivetrain Gear Ratio (For ever x spin of the motor, the wheel turns once)
+        public static final double kDrivetrainRatio = 10.91;
         //Drivetrain Parameters
         public static final double kLowSpeedRatio = 0.7;
         public static final double kHighSpeedRatio = 0.7;
         public static final double kLimitTurnRatio = 0.5;
         
-        public static final double kAutoSpeedRatio = 0.5;           //Adjusts how quickly we drive straight in auto
+        public static final double kAutoHighSpeedRatio = 0.8;           //Fast speed in auto when far from target
+        public static final double kAutoLowSpeedRatio = 0.6;           //Slow mode in auto when approaching target
         public static final double kAutoDistanceError = 20;         //Threshold acceptable distance error for auto
         public static final double kAutoMinFwdRatio = 0;            //Minimum power required to move robot
 
         public static final double kAutoTurnRatio = 0.03;           //Adjusts how quickly we turn in auto         
         public static final double kAutoAngleError = 1;             //Threshold acceptable angle error for auto
         public static final double kAutoMinRotRatio = .07;          //Minimum power required to turn robot
-        
+
         //Vision Paramters
         public static final double kVisionSpeedRatio = 0.2;
         public static final double kVisionTurnRatio = 0.7;
@@ -79,14 +83,14 @@ public final class Constants {
     //#################### INTAKE CONSTANTS ####################
 
     public static final class IntakeConstants {
-        public static final double kIntakeSpeed = 0.3; // works with bumper
-        public static final double kLoadingSpeed = 0.05;
+        public static final double kIntakeSpeed = 1.0; // works with bumper
+        public static final double kLoaderSpeed = 0.2;
     }
     //#################### SHOOTER CONSTANTS ####################
 
     public static final class ShooterConstants{
         
-        public static final double kShoot_highRPM = 2000; //Initiation
+        public static final double kShoot_highRPM = 2200; //Initiation
         //public static final double kShooter_17RPM = 5000; //Trench
         //public static final double kShooter_passRPM = 500; //pass
      

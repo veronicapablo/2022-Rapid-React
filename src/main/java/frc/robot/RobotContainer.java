@@ -8,6 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.cscore.UsbCamera;
+
+import java.util.ResourceBundle.Control;
+
 import edu.wpi.first.cameraserver.CameraServer;
 /*
 
@@ -28,11 +31,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ActivateIntake;
 import frc.robot.commands.IntakeOut;
 import frc.robot.commands.AutoAim;
-import frc.robot.commands.AutoDrive;
-import frc.robot.commands.AutoReverse;
 import frc.robot.commands.AutoTurn;
 import frc.robot.commands.LoadCargoIn;
+import frc.robot.commands.ReverseLoader;
 import frc.robot.commands.ShootHigh;
+import frc.robot.commands.AutoDrive;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -54,11 +57,9 @@ public class RobotContainer {
   private final IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
   private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
   private final SendableChooser<Command> auto = new SendableChooser<Command>();
-  private final SendableChooser<String> autou = new SendableChooser<String>();
 
 
-  XboxController Controller1 = new XboxController(0);
-  XboxController Controller2 = new XboxController(1);
+  public XboxController Controller1 = new XboxController(0);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -68,27 +69,20 @@ public class RobotContainer {
     //Add default commands here
     m_DrivetrainSubsystem.setDefaultCommand(new RunCommand(() -> m_DrivetrainSubsystem.cougarDrive(
             Controller1.getLeftY(),
-            -Controller1.getRightX()), m_DrivetrainSubsystem));
+            -Controller1.getRightX(),Controller1.getXButton(),Controller1.getLeftStickButton()), m_DrivetrainSubsystem));
               
     // Configure the button bindings
     configureButtonBindings();
+
     //private HttpCamera limelightFeed;
     //limelightFeed = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
     //driverShuffleboardTab.add("LL", limelightFeed).withPosition(0, 0).withSize(15, 8).withProperties(Map.of("Show Crosshair", true, "Show Controls", false));
 
     //Autonomous procedures
-    auto.addOption("AutoDrive", new AutoDrive(0.5, m_DrivetrainSubsystem));
-    auto.addOption("Reverse", new AutoReverse(m_DrivetrainSubsystem));
-    auto.addOption("Auto Turn", new AutoTurn(0, m_DrivetrainSubsystem));
-    //Autonomous positions
-    autou.addOption("Far Left", "Far Left");
-    autou.addOption("Middle Left", "Middle Left");
-    autou.addOption("Middle", "Middle");
-    autou.addOption("Middle Right", "Middle Right");
-    autou.addOption("Far Right", "Far Right");
 
-    //middle, mid l/r, far l/r
-
+    auto.setDefaultOption("Shoot and reverse", new ShootHigh(m_ShooterSubsystem,m_IntakeSubsystem).withTimeout(3) 
+    .andThen(new AutoDrive(-150.0, m_DrivetrainSubsystem)));
+    auto.addOption("Reverse", new AutoDrive(-100.0, m_DrivetrainSubsystem));
     SmartDashboard.putData("Auto Chooser", auto);
   }
 
@@ -103,8 +97,12 @@ public class RobotContainer {
      * ##### CONTROLLER 1 - PRIMARY #####
      * ##################################*/
 
+    
     new JoystickButton(Controller1, Button.kRightBumper.value)
     .whenHeld(new ActivateIntake(m_IntakeSubsystem));
+
+    new JoystickButton(Controller1, Button.kLeftBumper.value)
+    .whenHeld(new ReverseLoader(m_IntakeSubsystem));
 
     new JoystickButton(Controller1, Button.kA.value)
     .whenHeld(new IntakeOut(m_IntakeSubsystem));
@@ -113,17 +111,9 @@ public class RobotContainer {
     .whenHeld(new LoadCargoIn(m_IntakeSubsystem));
 
     new JoystickButton(Controller1, Button.kB.value)
-    .whenHeld(new ShootHigh(m_ShooterSubsystem));
-
-    
-
-    
-    /**#####################################
-     * ##### CONTROLLER 2  - SECONDARY #####
-     * #####################################*/
+    .whenHeld(new ShootHigh(m_ShooterSubsystem,m_IntakeSubsystem));
 
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
@@ -132,8 +122,9 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    
-   
+
+    System.out.println("RUNNING AUTONOMOUS COMMAND: " + auto.getSelected());
     return auto.getSelected();
+
   }
 }
